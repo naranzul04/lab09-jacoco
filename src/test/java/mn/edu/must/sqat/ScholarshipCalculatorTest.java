@@ -7,7 +7,6 @@ class ScholarshipCalculatorTest {
 
     private final ScholarshipCalculator calc = new ScholarshipCalculator();
 
-    // --- Happy path (Part A) ---
     @Test
     void letterGradeHappyPath() {
         assertEquals("A", calc.letterGrade(95));
@@ -28,7 +27,6 @@ class ScholarshipCalculatorTest {
         assertEquals(50, calc.scholarship(3.3, 15, false));
     }
 
-    // --- Part B: letterGrade & gpa remaining branches ---
     @Test
     void letterGradeOutOfRangeThrows() {
         assertThrows(IllegalArgumentException.class, () -> calc.letterGrade(-1));
@@ -44,11 +42,30 @@ class ScholarshipCalculatorTest {
     }
 
     @Test
+    void gpaNullThrows() {
+        assertThrows(IllegalArgumentException.class, () -> calc.gpa(null));
+    }
+
+    @Test
+    void gpaEmptyZeroIterationsThrows() {
+        assertThrows(IllegalArgumentException.class, () -> calc.gpa(new double[]{}));
+    }
+
+    @Test
+    void gpaOneIteration() {
+        assertEquals(4.0, calc.gpa(new double[]{95}), 1e-6);
+    }
+
+    @Test
+    void gpaMultipleIterations() {
+        assertEquals(2.5, calc.gpa(new double[]{95, 85, 75, 65}), 1e-6);
+    }
+
+    @Test
     void gpaSwitchAllCases() {
         assertEquals(2.0, calc.gpa(new double[]{95, 85, 75, 65, 50}), 1e-6);
     }
 
-    // --- Part B: scholarship CFG edges ---
     @Test
     void scholarshipInvalidGpaLowThrows() {
         assertThrows(IllegalArgumentException.class, () -> calc.scholarship(-0.1, 15, false));
@@ -89,28 +106,6 @@ class ScholarshipCalculatorTest {
         assertEquals(0, calc.scholarship(2.5, 16, false));
     }
 
-    // --- Part C: Loop boundary tests (0, 1, 2+ and null/empty) ---
-    @Test
-    void gpaNullThrows() {
-        assertThrows(IllegalArgumentException.class, () -> calc.gpa(null));
-    }
-
-    @Test
-    void gpaEmptyZeroIterationsThrows() {
-        assertThrows(IllegalArgumentException.class, () -> calc.gpa(new double[]{}));
-    }
-
-    @Test
-    void gpaOneIteration() {
-        assertEquals(4.0, calc.gpa(new double[]{95}), 1e-6);
-    }
-
-    @Test
-    void gpaMultipleIterations() {
-        assertEquals(2.5, calc.gpa(new double[]{95, 85, 75, 65}), 1e-6);
-    }
-
-    // --- Part D: Boundary value tests ---
     @Test
     void letterGradeBoundaryValues() {
         assertEquals("D", calc.letterGrade(60));
